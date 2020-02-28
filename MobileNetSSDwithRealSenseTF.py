@@ -162,8 +162,8 @@ def camThreadCentroid():
             
             # loop over the tracked objects
             for (objectID, depth) in objects.items():
-                text = "ID {}, {:.2f} meters away".format(objectID, depth)
-                
+                text = "ID {}, {} meters away".format(objectID, depth)
+                print(objects)
                 cv2.putText(img, text, (center_x - 10, center_y - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 cv2.circle(img, (center_x, center_y), 4, (0, 255, 0), -1)
@@ -209,7 +209,7 @@ def calc_depth(depth_frame, x, y):
 try:
     cv2.namedWindow('Objects',cv2.WINDOW_NORMAL)
     while True:
-        img, depth = camThreadSimple()
+        img, depth = camThreadCentroid()
         cv2.imshow('Objects', cv2.hconcat([img, depth]))
         # Exit at the end of the video on the 'q' keypress
         if cv2.waitKey(1) & 0xFF == ord('q'):
