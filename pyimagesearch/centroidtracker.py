@@ -51,14 +51,12 @@ class CentroidTracker():
 			return self.objects
 
 		# initialize an array of input centroids for the current frame
-		inputCentroids = np.zeros((len(rects), 2), dtype="int")
+		inputCentroids = np.zeros((len(rects), 1), dtype="int")
 
 		# loop over the bounding box rectangles
-		for (i, (startY, startX, endY, endX)) in enumerate(rects):
-			# use the bounding box coordinates to derive the centroid
-			cX = int((float(startX) + float(endX)) / 2.0)
-			cY = int((float(startY) + float(endY)) / 2.0)
-			inputCentroids[i] = (cX, cY)
+		for (i, (depth)) in enumerate(rects):
+			# use the bounding box depth to derive the centroid
+			inputCentroids[i] = (depth)
 
 		# if we are currently not tracking any objects take the input
 		# centroids and register each of them

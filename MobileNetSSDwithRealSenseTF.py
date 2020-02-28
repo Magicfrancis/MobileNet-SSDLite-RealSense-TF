@@ -138,6 +138,7 @@ def camThreadCentroid():
     img, colorized_depth, depth_frame, (height, width), (boxes, scores, classes, num) = get_frame_data()
         
     rects = []
+    ID_info = []
     # loop over the detections
     for i in range(len(boxes[0])):
         if scores[0][i] > 0.55:
@@ -150,20 +151,22 @@ def camThreadCentroid():
             center_x = xmin + round((xmax-xmin)/2)
             center_y = ymin + round((ymax-ymin)/2)
             
-            rects.append((ymin, xmin, ymax, ymax))
+            #calculate depth
+            depth = calc_depth(depth_frame, center_x, center_y)
+            rects.append((depth))
+            
             cv2.rectangle(img, (xmin, ymin), (xmax, ymax), (0, 255, 0), 2)
 
             # update our centroid tracker using the computed set of bounding box rectangles
             objects = ct.update(rects)
             
             # loop over the tracked objects
-            for (objectID, centroid) in objects.items():
-                depth = calc_depth(depth_frame, centroid[0], centroid[1])
+            for (objectID, depth) in objects.items():
                 text = "ID {}, {:.2f} meters away".format(objectID, depth)
-
-                cv2.putText(img, text, (centroid[0] - 10, centroid[1] - 10),
+                
+                cv2.putText(img, text, (center_x - 10, center_y - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-                cv2.circle(img, (centroid[0], centroid[1]), 4, (0, 255, 0), -1)
+                cv2.circle(img, (center_x, center_y), 4, (0, 255, 0), -1)
 
     return img, colorized_depth
 
