@@ -162,7 +162,9 @@ def camThreadCentroid():
             
             # loop over the tracked objects
             for (objectID, depth) in objects.items():
-                text = "ID {}, {} meters away".format(objectID, depth)
+            
+                depth_text = calc_depth_avg(depth)
+                text = "ID {}, {} meters away".format(objectID, depth_text)
                 print(objects)
                 cv2.putText(img, text, (center_x - 10, center_y - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
@@ -195,6 +197,11 @@ def get_frame_data():
 
     return color_image, colorized_depth, depth_frame, (height, width), (boxes, scores, classes, num) 
 
+def calc_depth_avg(depth_list):
+    #calculate depth avg in the list
+    depth_average = sum(depth_list) / len(depth_list) 
+    return round(depth_average, 2))    
+    
 def calc_depth(depth_frame, x, y):
     # Get an average of pixel depths
     meters = 0

@@ -18,10 +18,12 @@ class CentroidTracker():
 		# need to deregister the object from tracking
 		self.maxDisappeared = maxDisappeared
 
+    def avg_depth(self, )    
+        
 	def register(self, centroid):
 		# when registering an object we use the next available object
 		# ID to store the centroid
-		self.objects[self.nextObjectID] = centroid
+		self.objects[self.nextObjectID] = [centroid]
 		self.disappeared[self.nextObjectID] = 0
 		self.nextObjectID += 1
 
@@ -109,9 +111,16 @@ class CentroidTracker():
 				# set its new centroid, and reset the disappeared
 				# counter
 				objectID = objectIDs[row]
-				self.objects[objectID] = inputCentroids[col]
-				self.disappeared[objectID] = 0
-
+				
+                # append the depth of less than 10 frames old
+                if(len(self.objects[objectID]) < 10):
+                    self.objects[objectID].append(inputCentroids[col])
+				    self.disappeared[objectID] = 0
+                # append new frame and remove oldest frame
+                else :
+                    self.objects[objectID].pop(0)
+                    self.objects[objectID].append(inputCentroids[col])
+				    self.disappeared[objectID] = 0              
 				# indicate that we have examined each of the row and
 				# column indexes, respectively
 				usedRows.add(row)
