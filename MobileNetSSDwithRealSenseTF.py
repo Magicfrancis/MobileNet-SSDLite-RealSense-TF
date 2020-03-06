@@ -141,7 +141,8 @@ def camThreadCentroid():
     ID_info = []
     # loop over the detections
     for i in range(len(boxes[0])):
-        if scores[0][i] > 0.55:
+        # Only search for bottles, WILL NEED TO REMOVE OTHER CLASSES FROM MODEL LATER
+        if scores[0][i] > 0.55 and category_index[classes[0][i]]['name'] == 'bottle':
             box = tuple(boxes[0][i].tolist())
             ymin=round(box[0]*height)
             xmin=round(box[1]*width)
@@ -159,13 +160,11 @@ def camThreadCentroid():
 
             # update our centroid tracker using the computed set of bounding box rectangles
             objects = ct.update(rects)
-            
             # loop over the tracked objects
-            for (objectID, depth) in objects.items():
-            
-                depth_text = calc_depth_avg(depth)
-                text = "ID {}, {} meters away".format(objectID, depth_text)
-                print(objects)
+            for (objectID, object_depth) in objects.items():
+                depth_text = calc_depth_avg(object_depth)
+                print(objectID, depth_text)
+                text = "ID {}, {:.2f} meters away".format(objectID, depth_text)
                 cv2.putText(img, text, (center_x - 10, center_y - 10),
                     cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
                 cv2.circle(img, (center_x, center_y), 4, (0, 255, 0), -1)
@@ -199,8 +198,10 @@ def get_frame_data():
 
 def calc_depth_avg(depth_list):
     #calculate depth avg in the list
-    depth_average = sum(depth_list) / len(depth_list) 
-    return round(depth_average, 2))    
+    depth_average = sum(depth_list) / len(depth_list)
+    #print(depth_list)
+    #print(depth_average)    
+    return float(depth_average)  
     
 def calc_depth(depth_frame, x, y):
     # Get an average of pixel depths
